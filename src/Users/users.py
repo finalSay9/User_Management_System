@@ -1,10 +1,10 @@
 from fastapi import APIRouter,Depends, HTTPException,status
-import database
-import models
+import src.DB.database as database
+import src.DB.models as models
 from sqlalchemy.orm import Session
-import schema
+import src.DB.schema as schema
 from typing import List
-from auth import pwd_context, get_current_user
+from src.Authentication.auth import pwd_context, get_current_user
 
 
 

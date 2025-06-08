@@ -34,6 +34,40 @@ class TokenData(BaseModel):
     role: Optional[str] = None
 
 
+class DepartmentBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+
+class DepartmentCreate(BaseModel):
+    pass
+
+class Department(DepartmentBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] =None
+
+    class Config:
+        from_attributes = True
+
+class EmployeeBase(BaseModel):
+    user_id: int
+    department_id: int
+    postion: set
+    hire_date: datetime
+    salary: float
+
+class Employee(EmployeeBase):
+    id: int
+    create_at: datetime
+    update_at: Optional[datetime] = None
+    user: UserCreate
+    department: Department
+
+    class Config:
+        from_attribute = True
+
+
+
 
 
 
