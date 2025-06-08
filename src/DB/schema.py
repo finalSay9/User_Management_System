@@ -58,6 +58,10 @@ class EmployeeBase(BaseModel):
     hire_date: datetime
     salary: float
 
+class EmployeeCreate(EmployeeBase):
+    pass
+
+
 class Employee(EmployeeBase):
     id: int
     create_at: datetime
@@ -95,3 +99,42 @@ class UserDeleter(BaseModel):
     last_name: Optional[str] = None
     phone_number: Optional[str] = None
     password: Optional[str] = None
+
+
+
+
+
+class LeaveStatus(str, Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+
+
+class LeaveType(str, Enum):
+    SICK = "sick"
+    VACATION = "vacation"
+    PERSONAL = "personal"
+    OTHER = "other"
+
+
+class LeaveRequestBase(BaseModel):
+    employee_id: int
+    start_date: datetime
+    end_date: datetime
+    leave_type: LeaveType
+    reason: Optional[str] = None
+
+
+class LeaveRequestCreate(LeaveRequestBase):
+    pass
+
+
+class LeaveRequest(LeaveRequestBase):
+    id: int
+    status: LeaveStatus = LeaveStatus.PENDING
+    approver_id: Optional[int] = None
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True

@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends
-from Authentication import auth
+from src.Authentication import auth
 from src.DB import schema, models, database
 from typing import List
 from sqlalchemy.orm import Session
+from src.Authentication import crud
 
 
 router = APIRouter()
@@ -12,5 +13,6 @@ router = APIRouter()
 def create_deparment(
     deparment: schema.DepartmentCreate,
     db: Session = Depends(database.get_db),
-    current_user: models.Create_User = Depends(auth.chec)
-    )
+    current_user: models.Create_User = Depends(auth.check_admin_hr_access)
+    ):
+    return crud.create_department(db=db, department=deparment)

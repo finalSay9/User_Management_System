@@ -20,6 +20,7 @@ class Create_User(Base):
     role = Column(Enum(UserRole), default=UserRole.EMPLOYEE, nullable=False)
     employee = relationship
     password = Column(String)
+    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=True, onupdate=datetime.utcnow)
     reset_token =Column(String, nullable=True)

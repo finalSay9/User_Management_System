@@ -22,6 +22,14 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # OAuth2 scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
+
+def get_password_hash(password: str) -> str:
+    """
+    Hash a plain password for storage.
+    """
+    return pwd_context.hash(password)
+
 # Helper function to create JWT token
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
@@ -80,6 +88,11 @@ async def login(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
+#getting current active user
+async def get_current_active_user(current_user: models.Create_User = Depends(get_current_user))-> models.Create_User:
+    if not current_user.is_active:
+        raise HTTPException(status_code=status)
+
 #checking the permission of users
 def check_admin_hr_access(
         current_user: models.Create_User = Depends(get_current_active_user)
@@ -88,7 +101,3 @@ def check_admin_hr_access(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='admin or manager access required')
     return current_user
 
-#getting current active user
-async def get_current_active_user(current_user: models.Create_User = Depends(get_current_user))-> models.Create_User:
-    if not current_user.is_active:
-        raise HTTPException(status_code=status)
