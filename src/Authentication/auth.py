@@ -78,3 +78,17 @@ async def login(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+#checking the permission of users
+def check_admin_hr_access(
+        current_user: models.Create_User = Depends(get_current_active_user)
+        ) -> models.Create_User:
+    if current_user.role not in [schema.UserRole.ADMIN, schema.UserRole.MANAGER]:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='admin or manager access required')
+    return current_user
+
+#getting current active user
+async def get_current_active_user(current_user: models.Create_User = Depends(get_current_user))-> models.Create_User:
+    if not current_user.is_active:
+        raise HTTPException(status_code=status)
