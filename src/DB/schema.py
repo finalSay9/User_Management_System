@@ -6,11 +6,11 @@ from typing import Optional
 
 
 class UserRole(str, Enum):
-    SUPERUSER = "superuser"
+    SUPERUSER = "superuser"#for the whole comapny
     ADMIN = "admin"
-    EMPLOYEE = "employee"
-    HR = "hr"
-    MANAGER = "manager"
+    EMPLOYEE = "employee" #mere employee
+    HR = "hr"# hire employees
+    MANAGER = "manager"# each department
 
 
 

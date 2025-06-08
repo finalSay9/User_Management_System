@@ -15,7 +15,7 @@ app = FastAPI(title= 'Company Management System')
 
 app.include_router(users.router, tags=['create_users'])
 app.include_router(auth.router, tags=['auth'])
-app.include_router(department.router, tags='department')
+app.include_router(department.router, tags=['department'])
 
 
 

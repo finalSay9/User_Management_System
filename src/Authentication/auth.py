@@ -30,6 +30,9 @@ def get_password_hash(password: str) -> str:
     """
     return pwd_context.hash(password)
 
+
+
+
 # Helper function to create JWT token
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
@@ -95,9 +98,18 @@ async def get_current_active_user(current_user: models.Create_User = Depends(get
 
 #checking the permission of users
 def check_admin_hr_access(
-        current_user: models.Create_User = Depends(get_current_active_user)
+        current_user: schema.UserCreate = Depends(get_current_active_user)
         ) -> models.Create_User:
     if current_user.role not in [schema.UserRole.ADMIN, schema.UserRole.MANAGER]:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='admin or manager access required')
     return current_user
 
+
+#check admin access 
+def check_admin_access(current_user: schema.UserCreate = Depends(get_current_active_user)) -> schema.UserCreate:
+    """
+    Restrict access to admin users.
+    """
+    if current_user.role != models.UserRole.ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
+    return current_user
