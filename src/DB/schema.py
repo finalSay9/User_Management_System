@@ -19,6 +19,8 @@ class UserCreate(BaseModel): # user in
     first_name: str
     last_name: str
     phone_number: str
+    dob: str
+    gender: str
     password: str
     role: UserRole = UserRole.EMPLOYEE
 

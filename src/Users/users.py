@@ -25,6 +25,8 @@ def user_create(
         first_name=user.first_name,
         last_name=user.last_name,
         phone_number=user.phone_number,
+        dob = user.dob,
+        gender = user.gender,
         password=hashed_password,
     )
     db.add(user_db)
