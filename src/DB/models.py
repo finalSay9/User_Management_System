@@ -1,9 +1,20 @@
 from datetime import datetime
-from sqlalchemy import Column, DateTime, Integer, String, Boolean, Column, Date, DateTime, Enum, Float, ForeignKey, Integer, String, Text, func
+from sqlalchemy import Column, DateTime, Integer, String, Boolean, Column, Date, DateTime, Enum, Float, ForeignKey, Integer, String, Table, Text, func
 from src.DB.database import Base
 from sqlalchemy.orm import relationship
 from src.DB.schema import UserRole 
 from src.DB.schema import LeaveRequest,LeaveType,LeaveStatus
+
+
+
+
+# Junction table for many-to-many relationship
+user_department = Table(
+    'user_department',
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
+    Column('department_id', Integer, ForeignKey('departments.id'), primary_key=True)
+)
 
 #model for user 
 
@@ -26,6 +37,8 @@ class Create_User(Base):
     updated_at = Column(DateTime, nullable=True, onupdate=datetime.utcnow)
     reset_token =Column(String, nullable=True)
     reset_token_expire=Column(String, nullable=True)
+    departments = relationship("Department", secondary=user_department, back_populates="users")
+    
 
 
 class Department(Base):
@@ -37,6 +50,8 @@ class Department(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     employees = relationship('Employee', back_populates="department")
+    users = relationship("Create_User", secondary=user_department, back_populates="departments")
+
 
 
 class Employee(Base):

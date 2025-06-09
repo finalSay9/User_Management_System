@@ -10,30 +10,55 @@ from src.Authentication.auth import pwd_context, get_current_user
 
 router = APIRouter()
 
-#create user
 @router.post('/user', response_model=schema.UserOut)
 def user_create(
     user: schema.UserCreate,
     db: Session = Depends(database.get_db),
-    ):
-    existing_email = db.query(models.Create_User).filter(models.Create_User.email== user.email).first()
+):
+    existing_email = db.query(models.Create_User).filter(models.Create_User.email == user.email).first()
     if existing_email:
-        raise HTTPException(status_code=400, detail='the user with that email already exist')
+        raise HTTPException(status_code=400, detail='The user with that email already exists')
+
     hashed_password = pwd_context.hash(user.password)
-    user_db = models.Create_User (
-        email= user.email,
+    user_db = models.Create_User(
+        email=user.email,
         first_name=user.first_name,
         last_name=user.last_name,
         phone_number=user.phone_number,
-        dob = user.dob,
-        gender = user.gender,
-        role = user.role,
+        dob=user.dob,
+        gender=user.gender,
+        role=user.role,
         password=hashed_password,
     )
     db.add(user_db)
     db.commit()
     db.refresh(user_db)
-    return user_db
+
+    # Associate departments if provided
+    if user.department_ids:
+        departments = db.query(models.Department).filter(models.Department.id.in_(user.department_ids)).all()
+        if len(departments) != len(user.department_ids):
+            raise HTTPException(status_code=400, detail="One or more department IDs are invalid")
+        user_db.departments = departments
+        db.commit()
+
+    # Construct response with department_ids
+    response_data = {
+        "id": user_db.id,
+        "email": user_db.email,
+        "first_name": user_db.first_name,
+        "last_name": user_db.last_name,
+        "phone_number": user_db.phone_number,
+        "dob": user_db.dob,
+        "gender": user_db.gender,
+        "role": user_db.role,
+        "department_ids": [dept.id for dept in user_db.departments],
+        "created_at": user_db.created_at,
+        "updated_at": user_db.updated_at,
+    }
+    return response_data
+
+
 
 
 #gettings user
