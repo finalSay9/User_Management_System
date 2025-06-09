@@ -12,6 +12,10 @@ class UserRole(str, Enum):
     HR = "hr"
     MANAGER = "manager"
 
+class SuperUserCreate(BaseModel):
+    email: EmailStr
+    password: str
+
 class LeaveStatus(str, Enum):
     PENDING = "pending"
     APPROVED = "approved"

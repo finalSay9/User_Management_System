@@ -6,6 +6,7 @@ import src.Authentication.auth as auth
 from src.DB import models
 from src.DB.database import engine
 import src.Departments.department as department
+from src.Levels import superuser
 
 
 
@@ -16,6 +17,7 @@ app = FastAPI(title= 'Company Management System')
 app.include_router(users.router, tags=['create_users'])
 app.include_router(auth.router, tags=['auth'])
 app.include_router(department.router, tags=['department'])
+app.include_router(superuser.router, tags=['supersuer'])
 
 
 
