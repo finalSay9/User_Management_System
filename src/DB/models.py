@@ -19,7 +19,7 @@ class Create_User(Base):
     dob = Column(Date, nullable=False)
     gender = Column(String, nullable=False)
     role = Column(Enum(UserRole), default=UserRole.EMPLOYEE, nullable=False)
-    employee = relationship
+    employee_info = relationship("Employee", uselist=False, back_populates="user")
     password = Column(String)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -36,8 +36,7 @@ class Department(Base):
     description = Column(String, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-
-    employees = relationship('Employee', back_populates="departments")
+    employees = relationship('Employee', back_populates="department")
 
 
 class Employee(Base):
@@ -52,7 +51,7 @@ class Employee(Base):
     salary = Column(Float, nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
-    user = relationship("User", back_populates="employee_info")
+    user = relationship("Create_User", back_populates="employee_info")
     department = relationship("Department", back_populates="employees")
     leave_requests = relationship("LeaveRequest", back_populates="employee")
 
@@ -70,7 +69,7 @@ class LeaveRequest(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     employee = relationship("Employee", back_populates="leave_requests")
-    approver = relationship("User")
+    approver = relationship("Create_User")
 
 
 

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from datetime import datetime
+from datetime import date, datetime
 from typing import List, Optional
 from enum import Enum
 
@@ -26,7 +26,7 @@ class UserCreate(BaseModel):
     first_name: str
     last_name: str
     phone_number: str
-    dob: str  # Consider datetime.date
+    dob: date
     gender: str
     password: str
     role: UserRole = UserRole.EMPLOYEE
@@ -47,7 +47,7 @@ class UserOut(BaseModel):
     first_name: str
     last_name: str
     phone_number: str
-    dob: str
+    dob: date
     gender: str
     role: UserRole
     department_ids: List[int]
