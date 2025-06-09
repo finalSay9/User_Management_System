@@ -121,19 +121,19 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
     return user
 
-async def get_current_active_user(current_user: models.User = Depends(get_current_user)):
+async def get_current_active_user(current_user: models.Create_User = Depends(get_current_user)):
     return current_user
 
-async def check_role(required_roles: List[schema.UserRole], current_user: models.User = Depends(get_current_active_user)):
+async def check_role(required_roles: List[schema.UserRole], current_user: models.Create_User = Depends(get_current_active_user)):
     if current_user.role not in required_roles:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
     return current_user
 
-def check_admin_access(current_user: models.User = Depends(get_current_active_user)):
+def check_admin_access(current_user: models.Create_User = Depends(get_current_active_user)):
     return check_role([schema.UserRole.SUPERUSER, schema.UserRole.ADMIN], current_user)
 
-def check_admin_or_hr_access(current_user: models.User = Depends(get_current_active_user)):
+def check_admin_hr_access(current_user: models.Create_User = Depends(get_current_active_user)):
     return check_role([schema.UserRole.SUPERUSER, schema.UserRole.ADMIN, schema.UserRole.HR], current_user)
 
-def check_manager_access(current_user: models.User = Depends(get_current_active_user)):
+def check_manager_access(current_user: models.Create_User = Depends(get_current_active_user)):
     return check_role([schema.UserRole.MANAGER], current_user)

@@ -3,6 +3,7 @@ from sqlalchemy import Column, DateTime, Integer, String, Boolean, Column, Date,
 from src.DB.database import Base
 from sqlalchemy.orm import relationship
 from src.DB.schema import UserRole 
+from src.DB.schema import LeaveRequest,LeaveType,LeaveStatus
 
 #model for user 
 
@@ -42,17 +43,34 @@ class Department(Base):
 class Employee(Base):
     __tablename__ = "employees"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), unique=True)
-    department_id = Column(Integer, ForeignKey("departments.id"))
-    position = Column(String)
-    hire_date = Column(DateTime)
-    salary = Column(Float)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    user = relationship("User", back_populates="employee")
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
+    department_id = Column(Integer, ForeignKey("departments.id"), nullable=False)
+    position = Column(String, nullable=False)
+    hire_date = Column(DateTime, nullable=False)
+    salary = Column(Float, nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+    user = relationship("User", back_populates="employee_info")
     department = relationship("Department", back_populates="employees")
+    leave_requests = relationship("LeaveRequest", back_populates="employee")
+
+class LeaveRequest(Base):
+    __tablename__ = "leave_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    employee_id = Column(Integer, ForeignKey("employees.id"), nullable=False)
+    start_date = Column(DateTime, nullable=False)
+    end_date = Column(DateTime, nullable=False)
+    leave_type = Column(Enum(LeaveType), nullable=False)
+    reason = Column(String, nullable=True)
+    status = Column(Enum(LeaveStatus), default=LeaveStatus.PENDING, nullable=False)
+    approver_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+    employee = relationship("Employee", back_populates="leave_requests")
+    approver = relationship("User")
 
 
 
